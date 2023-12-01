@@ -36,11 +36,11 @@ void proton_decay(const int nevents=1000) {
 
     TList *lout = new TList;
     // create histograms
-    TH1D *htheta = new TH1D("htheta", "Distribution of Theta;theta;count", 100, 0, 2 * pi);
+    TH1D *htheta = new TH1D("htheta", "Distribution of Theta;theta;count", 100, 0, pi);
     lout->Add(htheta);
     TH1D *hphi = new TH1D("hphi", "Distribution of Phi;phi;count", 100, 0, 2 * pi);
     lout->Add(hphi);
-    TH2D *h2 = new TH2D("h2", "Theta vs Phi;theta;phi", 100, 0, 2 * pi, 100, 0, 2 * pi);
+    TH2D *h2 = new TH2D("h2", "Theta vs Phi;theta;phi", 100, 0, pi, 100, 0, 2 * pi);
     lout->Add(h2);
 
     TH3D *hxyz = new TH3D("hxyz", "Distribution in 3D;x;y;z", 100, -pp, pp, 100, -pp, pp, 100, -pp, pp); lout->Add(hxyz);
