@@ -41,9 +41,9 @@ void proton_decay(const int nevents=1000) {
     const double gamma = sqrt(1 + (p_p/m_p) * (p_p/m_p));
     const double beta = sqrt(1 - (1 / (gamma * gamma)));
 
-    printf("gamma: %lf, beta: %lf\n", gamma, beta);
+    // printf("gamma: %lf, beta: %lf\n", gamma, beta);
 
-    // Calculate momentum of decay products
+    // Calculate momentum of proton decay products
     const double m_p2 = m_p * m_p;
     const double m_pi2 = m_pi * m_pi;
     const double m_e2 = m_e * m_e;
@@ -52,6 +52,9 @@ void proton_decay(const int nevents=1000) {
     const double pp = sqrt(frac * frac - m_e2);
 
     // std::cout << "Momentum: " << p << " MeV/c" << "\n";
+
+    // Calculate momentum of pion decay products
+    const double p_gamma = m_pi / 2;    // in pion rest frame
 
     TRandom3 *rnd = new TRandom3();
     rnd->SetSeed(624);
@@ -76,6 +79,16 @@ void proton_decay(const int nevents=1000) {
     lout->Add(hy);
     TH1D *hz = new TH1D("hz", "Distribution of z component of pion momentum", 100, 1, -0);
     lout->Add(hz);
+
+    TH3D *hxyzgamma = new TH3D("hxyzgamma", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
+    lout->Add(hxyzgamma);
+
+    TH1D *hxgamma1 = new TH1D("hxgamma1", "Distribution of x component of photon momentum", 100, 1, -0);
+    lout->Add(hxgamma1);
+    TH1D *hygamma1 = new TH1D("hygamma1", "Distribution of y component of photon momentum", 100, 1, -0);
+    lout->Add(hygamma1);
+    TH1D *hzgamma1 = new TH1D("hzgamma1", "Distribution of z component of photon momentum", 100, 1, -0);
+    lout->Add(hzgamma1);
 
     // Generate theta and phi for 1000 events
     // theta, phi have uniform spherical distribution in rest frame
@@ -113,6 +126,21 @@ void proton_decay(const int nevents=1000) {
     double y_e = -999;
     double z_e = -999;
 
+    double theta_gamma = -999;
+    double phi_gamma = -999;
+
+    double x_gamma = -999;
+    double y_gamma = -999;
+    double z_gamma = -999;
+
+    double x_gamma1 = -999;
+    double y_gamma1 = -999;
+    double z_gamma1 = -999;
+
+    double x_gamma2 = -999;
+    double y_gamma2 = -999;
+    double z_gamma2 = -999;
+
     TTree *eventTree = new TTree("eventTree", "Events");
 
     /*
@@ -136,6 +164,15 @@ void proton_decay(const int nevents=1000) {
     eventTree->Branch("x Positron", &x_e);
     eventTree->Branch("y Positron", &y_e);
     eventTree->Branch("z Positron", &z_e);
+
+    eventTree->Branch("x Photon 1", &x_gamma1);
+    eventTree->Branch("y Photon 1", &y_gamma1);
+    eventTree->Branch("z Photon 1", &z_gamma1);
+
+    eventTree->Branch("x Photon 2", &x_gamma2);
+    eventTree->Branch("y Photon 2", &y_gamma2);
+    eventTree->Branch("z Photon 2", &z_gamma2);
+    
     
 
     for (int ii = 0; ii < nevents; ii++) {
@@ -176,9 +213,21 @@ void proton_decay(const int nevents=1000) {
 	const double ER_e2 = pp * pp + m_e * m_e;
 	TLorentzVector posVect(-xx, -yy, -zz, sqrt(ER_e2));
 
-	// pion decay into two photons
-	// 
+	// pion decay into two photons in pion rest frame
 
+	// get boost vector of pion
+	auto piBoostVect = piVect.BoostVector();
+	// generate direction
+	theta_gamma = acos(rnd->Uniform(-1, 1));
+	phi_gamma = rnd->Uniform(0, 2 * pi);
+
+	// calculate momentum in pion rest frame
+	x_gamma = p_gamma * sin(theta_gamma) * cos(phi_gamma);
+	y_gamma = p_gamma * sin(theta_gamma) * sin(phi_gamma);
+	z_gamma = p_gamma * cos(theta_gamma);
+
+	TLorentzVector gammaVect1(x_gamma, y_gamma, z_gamma, p_gamma);
+	TLorentzVector gammaVect2(-x_gamma, -y_gamma, -z_gamma, p_gamma);
 
 	// transform to lab frame
 	piVect.Boost(pBoostVect);
@@ -192,6 +241,22 @@ void proton_decay(const int nevents=1000) {
 	y_e = posVect.Py();
 	z_e = posVect.Pz();
 
+	// for photon, transform to proton rest frame, then lab frame
+	gammaVect1.Boost(piBoostVect);
+	gammaVect1.Boost(pBoostVect);
+
+	gammaVect2.Boost(piBoostVect);
+	gammaVect2.Boost(pBoostVect);
+
+	x_gamma1 = gammaVect1.Px();
+	y_gamma1 = gammaVect1.Py();
+	z_gamma1 = gammaVect1.Pz();
+
+	x_gamma2 = gammaVect2.Px();
+	y_gamma2 = gammaVect2.Py();
+	z_gamma2 = gammaVect2.Pz();
+
+	// fill histograms
 	htheta->Fill(theta);
 	hphi->Fill(phi);
 	h2->Fill(theta, phi);
@@ -201,6 +266,13 @@ void proton_decay(const int nevents=1000) {
 	hx->Fill(x_pi);
 	hy->Fill(y_pi);
 	hz->Fill(z_pi);
+
+	hxyzgamma->Fill(x_gamma1, y_gamma1, z_gamma1);
+	hxyzgamma->Fill(x_gamma2, y_gamma2, z_gamma2);
+
+	hxgamma1->Fill(x_gamma1);
+	hygamma1->Fill(y_gamma1);
+	hzgamma1->Fill(z_gamma1);
 	
 
 	eventTree->Fill();
