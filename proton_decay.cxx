@@ -13,6 +13,7 @@
 
 #include<iostream>
 
+
 void proton_decay(const int nevents=1000) {
 
     printf("nevents: %d\n", nevents);
@@ -25,6 +26,15 @@ void proton_decay(const int nevents=1000) {
     const double m_e = 0.511;  // positron
 
     const double p_p = 200;  // proton initial momentum
+
+    /*
+      proton has initial momentum
+      gaussian magnitude
+      isotropic direction
+    */
+
+    // const double p_p_mean = 200;
+    // const double p_p_sigma = 50;
 
     const double EE2 = p_p * p_p + m_p * m_p;  // total energy squared
 
@@ -46,6 +56,7 @@ void proton_decay(const int nevents=1000) {
     TRandom3 *rnd = new TRandom3();
     rnd->SetSeed(624);
     std::cout << "Random Seed:" << rnd->GetSeed() << "\n";
+    
 
     TList *lout = new TList;
     // create histograms
@@ -56,8 +67,15 @@ void proton_decay(const int nevents=1000) {
     TH2D *h2 = new TH2D("h2", "Theta vs Phi;theta;phi", 100, 0, pi, 100, 0, 2 * pi);
     lout->Add(h2);
 
-    TH3D *hxyz = new TH3D("hxyz", "Distribution in 3D;x;y;z", 100, 1, -0, 100, -pp, pp, 100, -pp, pp);
+    TH3D *hxyz = new TH3D("hxyz", "Distribution of pion momentum in 3D;x;y;z", 100, 1, -0, 100, -pp, pp, 100, -pp, pp);
     lout->Add(hxyz);
+
+    TH1D *hx = new TH1D("hx", "Distribution of x component of pion momentum", 100, 1, -0);
+    lout->Add(hx);
+    TH1D *hy = new TH1D("hy", "Distribution of y component of pion momentum", 100, 1, -0);
+    lout->Add(hy);
+    TH1D *hz = new TH1D("hz", "Distribution of z component of pion momentum", 100, 1, -0);
+    lout->Add(hz);
 
     // Generate theta and phi for 1000 events
     // theta, phi have uniform spherical distribution in rest frame
@@ -73,6 +91,7 @@ void proton_decay(const int nevents=1000) {
     double theta_p = -999;
     double phi_p = -999;
     double momentum_p = -999;
+    // double p_p = -999;
 
     double x_p = -999;
     double y_p = -999;
@@ -117,8 +136,12 @@ void proton_decay(const int nevents=1000) {
     eventTree->Branch("x Positron", &x_e);
     eventTree->Branch("y Positron", &y_e);
     eventTree->Branch("z Positron", &z_e);
+    
 
     for (int ii = 0; ii < nevents; ii++) {
+
+	// generate proton momentum magnitude
+	// p_p = rnd->Gaus(p_p_mean, 0);
 
 	// generate proton momentum direction
 	theta_p = acos(rnd->Uniform(-1, 1));
@@ -130,8 +153,8 @@ void proton_decay(const int nevents=1000) {
 	z_p = p_p * cos(theta);
 
 	// get boost vector of proton
-	TLorentzVector protonVect(x_p, y_p, z_p, sqrt(EE2));
-	// TLorentzVector protonVect(p_p, 0, 0, sqrt(EE2));
+	// TLorentzVector protonVect(x_p, y_p, z_p, sqrt(EE2));
+	TLorentzVector protonVect(0, 0, p_p, sqrt(EE2));
 	auto pBoostVect = protonVect.BoostVector();
 
 	// boost proton into rest frame
@@ -153,6 +176,10 @@ void proton_decay(const int nevents=1000) {
 	const double ER_e2 = pp * pp + m_e * m_e;
 	TLorentzVector posVect(-xx, -yy, -zz, sqrt(ER_e2));
 
+	// pion decay into two photons
+	// 
+
+
 	// transform to lab frame
 	piVect.Boost(pBoostVect);
 	posVect.Boost(pBoostVect);
@@ -170,6 +197,11 @@ void proton_decay(const int nevents=1000) {
 	h2->Fill(theta, phi);
 
 	hxyz->Fill(x_pi, y_pi, z_pi);
+
+	hx->Fill(x_pi);
+	hy->Fill(y_pi);
+	hz->Fill(z_pi);
+	
 
 	eventTree->Fill();
     }
