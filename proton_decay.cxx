@@ -25,21 +25,19 @@ void proton_decay(const int nevents=1000) {
     const double m_pi = 134.98;  // pion
     const double m_e = 0.511;  // positron
 
-    const double p_p = 200;  // proton initial momentum
+    // const double p_p = 200;  // proton initial momentum
 
-    /*
-      proton has initial momentum
-      gaussian magnitude
-      isotropic direction
-    */
+    // proton has initial momentum
+    // gaussian magnitude
+    // isotropic direction
 
-    // const double p_p_mean = 200;
-    // const double p_p_sigma = 50;
+    const double p_p_mean = 200;
+    const double p_p_sigma = 50;
 
-    const double EE2 = p_p * p_p + m_p * m_p;  // total energy squared
+    // const double EE2 = p_p * p_p + m_p * m_p;  // total energy squared
 
-    const double gamma = sqrt(1 + (p_p/m_p) * (p_p/m_p));
-    const double beta = sqrt(1 - (1 / (gamma * gamma)));
+    // const double gamma = sqrt(1 + (p_p/m_p) * (p_p/m_p));
+    // const double beta = sqrt(1 - (1 / (gamma * gamma)));
 
     // printf("gamma: %lf, beta: %lf\n", gamma, beta);
 
@@ -70,18 +68,34 @@ void proton_decay(const int nevents=1000) {
     TH2D *h2 = new TH2D("h2", "Theta vs Phi;theta;phi", 100, 0, pi, 100, 0, 2 * pi);
     lout->Add(h2);
 
-    TH3D *hxyz = new TH3D("hxyz", "Distribution of pion momentum in 3D;x;y;z", 100, 1, -0, 100, -pp, pp, 100, -pp, pp);
-    lout->Add(hxyz);
+    TH3D *hxyzproton = new TH3D("hxyzproton", "Distribution of proton momentum in 3D;x;y;z", 100, 1, -0, 100, 1, 0, 100, 1, 0);
+    lout->Add(hxyzproton);
 
-    TH1D *hx = new TH1D("hx", "Distribution of x component of pion momentum", 100, 1, -0);
-    lout->Add(hx);
-    TH1D *hy = new TH1D("hy", "Distribution of y component of pion momentum", 100, 1, -0);
-    lout->Add(hy);
-    TH1D *hz = new TH1D("hz", "Distribution of z component of pion momentum", 100, 1, -0);
-    lout->Add(hz);
+    TH1D *hxproton = new TH1D("hxproton", "Distribution of x component of pion momentum", 100, 1, -0);
+    lout->Add(hxproton);
+    TH1D *hyproton = new TH1D("hyproton", "Distribution of y component of pion momentum", 100, 1, -0);
+    lout->Add(hyproton);
+    TH1D *hzproton = new TH1D("hzproton", "Distribution of z component of pion momentum", 100, 1, -0);
+    lout->Add(hzproton);
+
+    TH3D *hxyzpi = new TH3D("hxyzpi", "Distribution of pion momentum in 3D;x;y;z", 100, 1, -0, 100, 1, 0, 100, 1, 0);
+    lout->Add(hxyzpi);
+
+    TH1D *hxpi = new TH1D("hxpi", "Distribution of x component of pion momentum", 100, 1, -0);
+    lout->Add(hxpi);
+    TH1D *hypi = new TH1D("hypi", "Distribution of y component of pion momentum", 100, 1, -0);
+    lout->Add(hypi);
+    TH1D *hzpi = new TH1D("hzpi", "Distribution of z component of pion momentum", 100, 1, -0);
+    lout->Add(hzpi);
 
     TH3D *hxyzgamma = new TH3D("hxyzgamma", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
     lout->Add(hxyzgamma);
+
+    TH3D *hxyzgamma1 = new TH3D("hxyzgamma1", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
+    lout->Add(hxyzgamma1);
+
+    TH3D *hxyzgamma2 = new TH3D("hxyzgamma2", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
+    lout->Add(hxyzgamma2);
 
     TH1D *hxgamma1 = new TH1D("hxgamma1", "Distribution of x component of photon momentum", 100, 1, -0);
     lout->Add(hxgamma1);
@@ -89,6 +103,13 @@ void proton_decay(const int nevents=1000) {
     lout->Add(hygamma1);
     TH1D *hzgamma1 = new TH1D("hzgamma1", "Distribution of z component of photon momentum", 100, 1, -0);
     lout->Add(hzgamma1);
+
+    TH1D *hxgamma2 = new TH1D("hxgamma2", "Distribution of x component of photon momentum", 100, 1, -0);
+    lout->Add(hxgamma2);
+    TH1D *hygamma2 = new TH1D("hygamma2", "Distribution of y component of photon momentum", 100, 1, -0);
+    lout->Add(hygamma2);
+    TH1D *hzgamma2 = new TH1D("hzgamma2", "Distribution of z component of photon momentum", 100, 1, -0);
+    lout->Add(hzgamma2);
 
     // Generate theta and phi for 1000 events
     // theta, phi have uniform spherical distribution in rest frame
@@ -103,9 +124,8 @@ void proton_decay(const int nevents=1000) {
 
     double theta_p = -999;
     double phi_p = -999;
-    double momentum_p = -999;
-    // double p_p = -999;
-
+    double p_p = -999;
+    
     double x_p = -999;
     double y_p = -999;
     double z_p = -999;
@@ -153,6 +173,7 @@ void proton_decay(const int nevents=1000) {
     eventTree->Branch("Momentum Positron", &p_e);
     */
 
+    eventTree->Branch("Proton Momentum", &p_p);
     eventTree->Branch("x Proton", &x_p);
     eventTree->Branch("y Proton", &y_p);
     eventTree->Branch("z Proton", &z_p);
@@ -178,20 +199,20 @@ void proton_decay(const int nevents=1000) {
     for (int ii = 0; ii < nevents; ii++) {
 
 	// generate proton momentum magnitude
-	// p_p = rnd->Gaus(p_p_mean, 0);
+	p_p = rnd->Gaus(p_p_mean, p_p_sigma);
+	const double E_p2 = p_p * p_p + m_p * m_p;
 
 	// generate proton momentum direction
 	theta_p = acos(rnd->Uniform(-1, 1));
 	phi_p = rnd->Uniform(0, 2 * pi);
-	momentum_p = p_p;
 
 	x_p = p_p * sin(theta) * cos(phi);
 	y_p = p_p * sin(theta) * sin(phi);
 	z_p = p_p * cos(theta);
 
 	// get boost vector of proton
-	// TLorentzVector protonVect(x_p, y_p, z_p, sqrt(EE2));
-	TLorentzVector protonVect(0, 0, p_p, sqrt(EE2));
+	TLorentzVector protonVect(x_p, y_p, z_p, sqrt(E_p2));
+	// TLorentzVector protonVect(0, 0, p_p, sqrt(E_p2));
 	auto pBoostVect = protonVect.BoostVector();
 
 	// boost proton into rest frame
@@ -248,31 +269,55 @@ void proton_decay(const int nevents=1000) {
 	gammaVect2.Boost(piBoostVect);
 	gammaVect2.Boost(pBoostVect);
 
-	x_gamma1 = gammaVect1.Px();
-	y_gamma1 = gammaVect1.Py();
-	z_gamma1 = gammaVect1.Pz();
+	// gamma1 should have higher energy, swap photons if needed
+	if (gammaVect1.E() > gammaVect2.E()) {
+	    x_gamma1 = gammaVect1.Px();
+	    y_gamma1 = gammaVect1.Py();
+	    z_gamma1 = gammaVect1.Pz();
 
-	x_gamma2 = gammaVect2.Px();
-	y_gamma2 = gammaVect2.Py();
-	z_gamma2 = gammaVect2.Pz();
+	    x_gamma2 = gammaVect2.Px();
+	    y_gamma2 = gammaVect2.Py();
+	    z_gamma2 = gammaVect2.Pz();
+	} else {
+	    x_gamma2 = gammaVect1.Px();
+	    y_gamma2 = gammaVect1.Py();
+	    z_gamma2 = gammaVect1.Pz();
+
+	    x_gamma1 = gammaVect2.Px();
+	    y_gamma1 = gammaVect2.Py();
+	    z_gamma1 = gammaVect2.Pz();
+	}
 
 	// fill histograms
 	htheta->Fill(theta);
 	hphi->Fill(phi);
 	h2->Fill(theta, phi);
 
-	hxyz->Fill(x_pi, y_pi, z_pi);
+	hxyzproton->Fill(x_p, y_p, z_p);
 
-	hx->Fill(x_pi);
-	hy->Fill(y_pi);
-	hz->Fill(z_pi);
+	hxproton->Fill(x_p);
+	hyproton->Fill(y_p);
+	hzproton->Fill(z_p);
+
+	hxyzpi->Fill(x_pi, y_pi, z_pi);
+
+	hxpi->Fill(x_pi);
+	hypi->Fill(y_pi);
+	hzpi->Fill(z_pi);
 
 	hxyzgamma->Fill(x_gamma1, y_gamma1, z_gamma1);
 	hxyzgamma->Fill(x_gamma2, y_gamma2, z_gamma2);
 
+	hxyzgamma1->Fill(x_gamma1, y_gamma1, z_gamma1);
+	hxyzgamma2->Fill(x_gamma2, y_gamma2, z_gamma2);
+
 	hxgamma1->Fill(x_gamma1);
 	hygamma1->Fill(y_gamma1);
 	hzgamma1->Fill(z_gamma1);
+
+	hxgamma2->Fill(x_gamma2);
+	hygamma2->Fill(y_gamma2);
+	hzgamma2->Fill(z_gamma2);
 	
 
 	eventTree->Fill();
