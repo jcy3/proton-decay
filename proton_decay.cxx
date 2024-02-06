@@ -25,21 +25,12 @@ void proton_decay(const int nevents=1000) {
     const double m_pi = 134.98;  // pion
     const double m_e = 0.511;  // positron
 
-    // const double p_p = 200;  // proton initial momentum
-
     // proton has initial momentum
     // gaussian magnitude
     // isotropic direction
 
     const double p_p_mean = 200;
     const double p_p_sigma = 50;
-
-    // const double EE2 = p_p * p_p + m_p * m_p;  // total energy squared
-
-    // const double gamma = sqrt(1 + (p_p/m_p) * (p_p/m_p));
-    // const double beta = sqrt(1 - (1 / (gamma * gamma)));
-
-    // printf("gamma: %lf, beta: %lf\n", gamma, beta);
 
     // Calculate momentum of proton decay products
     const double m_p2 = m_p * m_p;
@@ -48,8 +39,6 @@ void proton_decay(const int nevents=1000) {
 
     const double frac = (m_p2 + m_e2 - m_pi2) / (2 * m_p);
     const double pp = sqrt(frac * frac - m_e2);
-
-    // std::cout << "Momentum: " << p << " MeV/c" << "\n";
 
     // Calculate momentum of pion decay products
     const double p_gamma = m_pi / 2;    // in pion rest frame
@@ -111,8 +100,7 @@ void proton_decay(const int nevents=1000) {
     TH1D *hzgamma2 = new TH1D("hzgamma2", "Distribution of z component of photon momentum", 100, 1, -0);
     lout->Add(hzgamma2);
 
-    // Generate theta and phi for 1000 events
-    // theta, phi have uniform spherical distribution in rest frame
+    // initialise variables
 
     double theta = -999;
     double phi = -999;
@@ -161,17 +149,8 @@ void proton_decay(const int nevents=1000) {
     double y_gamma2 = -999;
     double z_gamma2 = -999;
 
+    // create event tree
     TTree *eventTree = new TTree("eventTree", "Events");
-
-    /*
-    eventTree->Branch("Theta Pi", &theta_pi);
-    eventTree->Branch("Phi Pi", &phi_pi);
-    eventTree->Branch("Momentum Pi", &p_pi);
-
-    eventTree->Branch("Theta Positron", &theta_e);
-    eventTree->Branch("Phi Positron", &phi_e);
-    eventTree->Branch("Momentum Positron", &p_e);
-    */
 
     eventTree->Branch("Proton Momentum", &p_p);
     eventTree->Branch("x Proton", &x_p);
@@ -193,8 +172,7 @@ void proton_decay(const int nevents=1000) {
     eventTree->Branch("x Photon 2", &x_gamma2);
     eventTree->Branch("y Photon 2", &y_gamma2);
     eventTree->Branch("z Photon 2", &z_gamma2);
-    
-    
+
 
     for (int ii = 0; ii < nevents; ii++) {
 
@@ -206,27 +184,23 @@ void proton_decay(const int nevents=1000) {
 	theta_p = acos(rnd->Uniform(-1, 1));
 	phi_p = rnd->Uniform(0, 2 * pi);
 
-	x_p = p_p * sin(theta) * cos(phi);
-	y_p = p_p * sin(theta) * sin(phi);
-	z_p = p_p * cos(theta);
+	x_p = p_p * sin(theta_p) * cos(phi_p);
+	y_p = p_p * sin(theta_p) * sin(phi_p);
+	z_p = p_p * cos(theta_p);
 
 	// get boost vector of proton
 	TLorentzVector protonVect(x_p, y_p, z_p, sqrt(E_p2));
-	// TLorentzVector protonVect(0, 0, p_p, sqrt(E_p2));
 	auto pBoostVect = protonVect.BoostVector();
 
-	// boost proton into rest frame
-	protonVect.Boost(-pBoostVect);
-
 	// calculate decay products in proton rest frame
-	theta = acos(rnd->Uniform(-1, 1));
-	phi = rnd->Uniform(0, 2 * pi);
+	theta_pi = acos(rnd->Uniform(-1, 1));
+	phi_pi = rnd->Uniform(0, 2 * pi);
 	momentum = pp;
 
 	// convert spherical coordinates to cartesian
-	xx = pp * sin(theta) * cos(phi);
-	yy = pp * sin(theta) * sin(phi);
-	zz = pp * cos(theta);
+	xx = pp * sin(theta_pi) * cos(phi_pi);
+	yy = pp * sin(theta_pi) * sin(phi_pi);
+	zz = pp * cos(theta_pi);
 
 	const double ER_pi2 = pp * pp + m_pi * m_pi;
 	TLorentzVector piVect(xx, yy, zz, sqrt(ER_pi2));
@@ -250,7 +224,7 @@ void proton_decay(const int nevents=1000) {
 	TLorentzVector gammaVect1(x_gamma, y_gamma, z_gamma, p_gamma);
 	TLorentzVector gammaVect2(-x_gamma, -y_gamma, -z_gamma, p_gamma);
 
-	// transform to lab frame
+	// transform pion and positron to lab frame
 	piVect.Boost(pBoostVect);
 	posVect.Boost(pBoostVect);
 
@@ -323,32 +297,10 @@ void proton_decay(const int nevents=1000) {
 	eventTree->Fill();
     }
 
-    /*
-    TCanvas *c1 = new TCanvas("c1", "c1");
-    TCanvas *c2 = new TCanvas("c2", "c2");
-    TCanvas *c3 = new TCanvas("c3", "c3");
-    TCanvas *c4 = new TCanvas("c4", "c4");
-    c1->cd();
-    htheta->Draw();
-    c2->cd();
-    hphi->Draw();
-    c3->cd();
-    h2->Draw();
-    c4->cd();
-    hxyz->Draw();
-
-    c1->Print("theta.png");
-    c2->Print("phi.png");
-    c3->Print("thetaphi.png");
-    c4->Print("xyz.png");
-    */
-
-    // Store pi0 events in tree
+    // Store event tree and histograms in root file
     TFile *file = TFile::Open("events.root", "RECREATE");
     lout->Write();
     eventTree->Write();
     file->Save();
     file->Close();
 }
-			
-			
