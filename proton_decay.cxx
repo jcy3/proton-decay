@@ -100,6 +100,20 @@ void proton_decay(const int nevents=1000) {
     TH1D *hzgamma2 = new TH1D("hzgamma2", "Distribution of z component of photon momentum", 100, 1, -0);
     lout->Add(hzgamma2);
 
+    TH2D *hxygamma1 = new TH2D("hxygamma1", "x vs y for gamma1", 100, 1, 0, 100, 1, 0);
+    lout->Add(hxygamma1);
+    TH2D *hxzgamma1 = new TH2D("hxzgamma1", "x vs z for gamma1", 100, 1, 0, 100, 1, 0);
+    lout->Add(hxzgamma1);
+    TH2D *hyzgamma1 = new TH2D("hyzgamma1", "y vs z for gamma1", 100, 1, 0, 100, 1, 0);
+    lout->Add(hyzgamma1);
+
+    TH2D *hxygamma2 = new TH2D("hxygamma2", "x vs y for gamma2", 100, 1, 0, 100, 1, 0);
+    lout->Add(hxygamma2);
+    TH2D *hxzgamma2 = new TH2D("hxzgamma2", "x vs z for gamma2", 100, 1, 0, 100, 1, 0);
+    lout->Add(hxzgamma2);
+    TH2D *hyzgamma2 = new TH2D("hyzgamma2", "y vs z for gamma2", 100, 1, 0, 100, 1, 0);
+    lout->Add(hyzgamma2);
+
     // initialise variables
 
     double theta = -999;
@@ -292,7 +306,14 @@ void proton_decay(const int nevents=1000) {
 	hxgamma2->Fill(x_gamma2);
 	hygamma2->Fill(y_gamma2);
 	hzgamma2->Fill(z_gamma2);
-	
+
+	hxygamma1->Fill(x_gamma1, y_gamma1);
+	hxzgamma1->Fill(x_gamma1, z_gamma1);
+	hyzgamma1->Fill(y_gamma1, z_gamma1);
+
+	hxygamma2->Fill(x_gamma2, y_gamma2);
+	hxzgamma2->Fill(x_gamma2, z_gamma2);
+	hyzgamma2->Fill(y_gamma2, z_gamma2);
 
 	eventTree->Fill();
     }
