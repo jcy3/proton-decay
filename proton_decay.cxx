@@ -9,8 +9,6 @@
 #include<TCanvas.h>
 #include<TFile.h>
 
-#include "Math/Vector4D.h"
-
 #include<iostream>
 
 
@@ -60,21 +58,21 @@ void proton_decay(const int nevents=1000) {
     TH3D *hxyzproton = new TH3D("hxyzproton", "Distribution of proton momentum in 3D;x;y;z", 100, 1, -0, 100, 1, 0, 100, 1, 0);
     lout->Add(hxyzproton);
 
-    TH1D *hxproton = new TH1D("hxproton", "Distribution of x component of pion momentum", 100, 1, -0);
+    TH1D *hxproton = new TH1D("hxproton", "Distribution of x component of proton momentum;x Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hxproton);
-    TH1D *hyproton = new TH1D("hyproton", "Distribution of y component of pion momentum", 100, 1, -0);
+    TH1D *hyproton = new TH1D("hyproton", "Distribution of y component of proton momentum;y Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hyproton);
-    TH1D *hzproton = new TH1D("hzproton", "Distribution of z component of pion momentum", 100, 1, -0);
+    TH1D *hzproton = new TH1D("hzproton", "Distribution of z component of proton momentum;z Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hzproton);
 
     TH3D *hxyzpi = new TH3D("hxyzpi", "Distribution of pion momentum in 3D;x;y;z", 100, 1, -0, 100, 1, 0, 100, 1, 0);
     lout->Add(hxyzpi);
 
-    TH1D *hxpi = new TH1D("hxpi", "Distribution of x component of pion momentum", 100, 1, -0);
+    TH1D *hxpi = new TH1D("hxpi", "Distribution of x component of pion momentum;x Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hxpi);
-    TH1D *hypi = new TH1D("hypi", "Distribution of y component of pion momentum", 100, 1, -0);
+    TH1D *hypi = new TH1D("hypi", "Distribution of y component of pion momentum;y Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hypi);
-    TH1D *hzpi = new TH1D("hzpi", "Distribution of z component of pion momentum", 100, 1, -0);
+    TH1D *hzpi = new TH1D("hzpi", "Distribution of z component of pion momentum;z Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hzpi);
 
     TH3D *hxyzgamma = new TH3D("hxyzgamma", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
@@ -86,18 +84,18 @@ void proton_decay(const int nevents=1000) {
     TH3D *hxyzgamma2 = new TH3D("hxyzgamma2", "Distribution of photon momentum in 3D;x;y;z", 100, 1, 0, 100, 1, 0, 100, 1, 0);
     lout->Add(hxyzgamma2);
 
-    TH1D *hxgamma1 = new TH1D("hxgamma1", "Distribution of x component of photon momentum", 100, 1, -0);
+    TH1D *hxgamma1 = new TH1D("hxgamma1", "Distribution of x component of photon momentum;x Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hxgamma1);
-    TH1D *hygamma1 = new TH1D("hygamma1", "Distribution of y component of photon momentum", 100, 1, -0);
+    TH1D *hygamma1 = new TH1D("hygamma1", "Distribution of y component of photon momentum;y Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hygamma1);
-    TH1D *hzgamma1 = new TH1D("hzgamma1", "Distribution of z component of photon momentum", 100, 1, -0);
+    TH1D *hzgamma1 = new TH1D("hzgamma1", "Distribution of z component of photon momentum;z Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hzgamma1);
 
-    TH1D *hxgamma2 = new TH1D("hxgamma2", "Distribution of x component of photon momentum", 100, 1, -0);
+    TH1D *hxgamma2 = new TH1D("hxgamma2", "Distribution of x component of photon momentum;x Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hxgamma2);
-    TH1D *hygamma2 = new TH1D("hygamma2", "Distribution of y component of photon momentum", 100, 1, -0);
+    TH1D *hygamma2 = new TH1D("hygamma2", "Distribution of y component of photon momentum;y Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hygamma2);
-    TH1D *hzgamma2 = new TH1D("hzgamma2", "Distribution of z component of photon momentum", 100, 1, -0);
+    TH1D *hzgamma2 = new TH1D("hzgamma2", "Distribution of z component of photon momentum;z Momentum / MeV;Count", 100, 1, -0);
     lout->Add(hzgamma2);
 
     TH2D *hxygamma1 = new TH2D("hxygamma1", "x vs y for gamma1", 100, 1, 0, 100, 1, 0);
@@ -113,6 +111,17 @@ void proton_decay(const int nevents=1000) {
     lout->Add(hxzgamma2);
     TH2D *hyzgamma2 = new TH2D("hyzgamma2", "y vs z for gamma2", 100, 1, 0, 100, 1, 0);
     lout->Add(hyzgamma2);
+
+
+    TH1D *hEpi = new TH1D("hEpi", "Distribution of total pion momentum; Momentum / MeV;Count", 100, 1, 0);
+    lout->Add(hEpi);
+    TH1D *hEpos = new TH1D("hEpos", "Distribution of total positron momentum; Momentum / MeV;Count", 100, 1, 0);
+    lout->Add(hEpos);
+
+    TH1D *hEgamma1 = new TH1D("hEgamma1", "Distribution of total photon momentum; Momentum / MeV;Count", 100, 1, 0);
+    lout->Add(hEgamma1);
+    TH1D *hEgamma2 = new TH1D("hEgamma2", "Distribution of total photon momentum; Momentum / MeV;Count", 100, 1, 0);
+    lout->Add(hEgamma2);
 
     // initialise variables
 
@@ -139,11 +148,13 @@ void proton_decay(const int nevents=1000) {
     double theta_e = -999;
     double phi_e = -999;
     double p_e = -999;
- 
+
+    double E_pi = -999;
     double x_pi = -999;
     double y_pi = -999;
     double z_pi = -999;
 
+    double E_e = -999;
     double x_e = -999;
     double y_e = -999;
     double z_e = -999;
@@ -154,11 +165,13 @@ void proton_decay(const int nevents=1000) {
     double x_gamma = -999;
     double y_gamma = -999;
     double z_gamma = -999;
-
+    
+    double E_gamma1 = -999;
     double x_gamma1 = -999;
     double y_gamma1 = -999;
     double z_gamma1 = -999;
 
+    double E_gamma2 = -999;
     double x_gamma2 = -999;
     double y_gamma2 = -999;
     double z_gamma2 = -999;
@@ -171,18 +184,22 @@ void proton_decay(const int nevents=1000) {
     eventTree->Branch("y Proton", &y_p);
     eventTree->Branch("z Proton", &z_p);
 
+    eventTree->Branch("E Pi", &E_pi);
     eventTree->Branch("x Pi", &x_pi);
     eventTree->Branch("y Pi", &y_pi);
     eventTree->Branch("z Pi", &z_pi);
 
+    eventTree->Branch("E Positron", &E_e);
     eventTree->Branch("x Positron", &x_e);
     eventTree->Branch("y Positron", &y_e);
     eventTree->Branch("z Positron", &z_e);
 
+    eventTree->Branch("E Photon 1", &E_gamma1);
     eventTree->Branch("x Photon 1", &x_gamma1);
     eventTree->Branch("y Photon 1", &y_gamma1);
     eventTree->Branch("z Photon 1", &z_gamma1);
 
+    eventTree->Branch("E Photon 1", &E_gamma2);
     eventTree->Branch("x Photon 2", &x_gamma2);
     eventTree->Branch("y Photon 2", &y_gamma2);
     eventTree->Branch("z Photon 2", &z_gamma2);
@@ -242,10 +259,12 @@ void proton_decay(const int nevents=1000) {
 	piVect.Boost(pBoostVect);
 	posVect.Boost(pBoostVect);
 
+	E_pi = piVect.E();
 	x_pi = piVect.Px();
 	y_pi = piVect.Py();
 	z_pi = piVect.Pz();
 
+	E_e = posVect.E();
 	x_e = posVect.Px();
 	y_e = posVect.Py();
 	z_e = posVect.Pz();
@@ -259,18 +278,22 @@ void proton_decay(const int nevents=1000) {
 
 	// gamma1 should have higher energy, swap photons if needed
 	if (gammaVect1.E() > gammaVect2.E()) {
+	    E_gamma1 = gammaVect1.E();
 	    x_gamma1 = gammaVect1.Px();
 	    y_gamma1 = gammaVect1.Py();
 	    z_gamma1 = gammaVect1.Pz();
 
+	    E_gamma2 = gammaVect2.E();
 	    x_gamma2 = gammaVect2.Px();
 	    y_gamma2 = gammaVect2.Py();
 	    z_gamma2 = gammaVect2.Pz();
 	} else {
+	    E_gamma2 = gammaVect1.E();
 	    x_gamma2 = gammaVect1.Px();
 	    y_gamma2 = gammaVect1.Py();
 	    z_gamma2 = gammaVect1.Pz();
 
+	    E_gamma1 = gammaVect1.E();
 	    x_gamma1 = gammaVect2.Px();
 	    y_gamma1 = gammaVect2.Py();
 	    z_gamma1 = gammaVect2.Pz();
@@ -293,16 +316,21 @@ void proton_decay(const int nevents=1000) {
 	hypi->Fill(y_pi);
 	hzpi->Fill(z_pi);
 
+	hEpi->Fill(E_pi);
+	hEpos->Fill(E_e);
+
 	hxyzgamma->Fill(x_gamma1, y_gamma1, z_gamma1);
 	hxyzgamma->Fill(x_gamma2, y_gamma2, z_gamma2);
 
 	hxyzgamma1->Fill(x_gamma1, y_gamma1, z_gamma1);
 	hxyzgamma2->Fill(x_gamma2, y_gamma2, z_gamma2);
 
+	hEgamma1->Fill(E_gamma1);
 	hxgamma1->Fill(x_gamma1);
 	hygamma1->Fill(y_gamma1);
 	hzgamma1->Fill(z_gamma1);
 
+	hEgamma2->Fill(E_gamma2);
 	hxgamma2->Fill(x_gamma2);
 	hygamma2->Fill(y_gamma2);
 	hzgamma2->Fill(z_gamma2);
